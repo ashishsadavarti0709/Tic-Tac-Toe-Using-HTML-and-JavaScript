@@ -1,0 +1,230 @@
+<!-- 
+    Name: Ashish Sadavarti
+    Project: Tic Tac Toe Game
+    Description: Interactive Tic Tac Toe game with player customization
+    Features:
+    - Player name input
+    - X/O selection
+    - Win detection
+    - Game reset options
+    Technologies: HTML5, CSS3, JavaScript
+    Copyright: © 2025 Ashish Sadavarti. All rights reserved.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Basic meta tags for character set and responsive viewport -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tic-Tac-Toe</title> <!-- Page title -->
+    
+    <style>
+        /* Global body styling - centers content and sets background */
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #98AFC7; /* Light blue background */
+        }
+
+        /* Main heading styling */
+        h1 {
+            margin-top: 20px;
+        }
+
+        /* Common button styling (applies to all buttons) */
+        button, #reset, #start-game {
+            height: 50px;
+            width: 100px;
+            border-radius: 8px;
+            margin: 5px;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        /* Specific styling for X button (green) */
+        #X {
+            background-color: #6bbb4b;
+            color: black;
+        }
+
+        /* Specific styling for O button (red) */
+        #O {
+            background-color: #c31c4b;
+            color: black;
+        }
+
+        /* Reset and start game buttons (pink) */
+        #reset,
+        #start-game {
+            background-color: #ff758c;
+        }
+
+        /* Hover effect for all buttons */
+        button:hover, #reset:hover, #start-game:hover {
+            opacity: 0.9;
+        }
+
+        /* Game board grid container - 3x3 layout */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 100px); /* 3 columns */
+            grid-template-rows: repeat(3, 100px); /* 3 rows */
+            gap: 2px; /* Small gap between cells */
+            margin: 20px 0; /* Vertical margin */
+        }
+
+        /* Individual grid cell styling */
+        .grid-item {
+            border: 1px solid black; /* Cell border */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px; /* Large text for X/O */
+            cursor: pointer; /* Pointer cursor to indicate clickable */
+            background-color: white; /* White cell background */
+        }
+
+        /* Player display text styling */
+        #player-display {
+            margin: 10px 0;
+            font-weight: bold;
+            font-size: 18px;
+        }
+
+        /* Modal overlay styling (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed;
+            z-index: 1; /* On top of other elements */
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.4); /* Semi-transparent black */
+        }
+
+        /* Modal content box styling */
+        .modal-content {
+            background-color: #fefefe; /* White background */
+            margin: 15% auto; /* Centered vertically */
+            padding: 20px;
+            border: 1px solid #888;
+            width: 300px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        /* Input fields inside modals */
+        .modal-content input {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            box-sizing: border-box; /* Include padding in width */
+        }
+
+        /* Buttons inside modals */
+        .modal-content button {
+            width: 100%;
+        }
+
+        /* Special styling for game-end modal buttons */
+        #game-end-modal button {
+            height: 40px;
+            width: 120px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #7c6596; /* Purple color */
+            color: white;
+        }
+
+        /* Hover effect for game-end buttons */
+        #game-end-modal button:hover {
+            opacity: 0.9;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: white;
+            background-color: #333;
+            width: 100%;
+            opacity: 0.25; /* 25% opacity */
+        }
+
+    </style>
+</head>
+<body>
+    <!-- Main game heading -->
+    <h1>Tic-Tac-Toe</h1>
+    
+    <!-- Display for current player information -->
+    <div id="player-display">Current Player: </div>
+
+    <!-- Player selection buttons -->
+    <button id="X">Play as X</button>
+    <button id="O">Play as O</button>
+    
+    <!-- Game board grid - 3x3 layout -->
+    <div class="grid-container">
+        <!-- 9 empty cells for the game board -->
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+        <div class="grid-item"></div>
+    </div>
+
+    <!-- Game reset button -->
+    <button id="reset">Reset Game</button>
+
+    <!-- Player Name Input Modal (shown at game start) -->
+    <div id="name-modal" class="modal">
+        <div class="modal-content">
+            <h2>Enter Player Names</h2>
+            <!-- Player 1 name input -->
+            <label for="player1">Player 1 (X):</label>
+            <input type="text" id="player1" placeholder="Player 1 name">
+            <!-- Player 2 name input -->
+            <label for="player2">Player 2 (O):</label>
+            <input type="text" id="player2" placeholder="Player 2 name">
+            <!-- Button to start game after name entry -->
+            <button id="start-game">Start Game</button>
+        </div>
+    </div>
+
+    <!-- Game End Modal (shown when game ends) -->
+    <div id="game-end-modal" class="modal">
+        <div class="modal-content">
+            <!-- Message will be filled by JavaScript -->
+            <h2 id="game-end-message"></h2>
+            <!-- Button to replay with same players -->
+            <button id="replay-btn">Replay</button>
+            <!-- Button to start completely new game -->
+            <button id="new-game-btn">Start New</button>
+        </div>
+    </div>
+
+        <!-- Footer Section -->
+    <footer>
+        <p>&copy; Copyright Reserved</p>
+        <p>Name: Ashish Sadavarti</p>
+        <p>Title: Tic Tac Toe Game</p>
+    </footer>
+
+    <!-- Link to JavaScript file -->
+    <script src="Tic_Tac_toe.js"></script>
+</body>
+</html>
